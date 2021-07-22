@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  python3.8
+  python3.7
 
   Sample SAM Template for lambda
 
@@ -9,12 +9,17 @@ Description: >
 Globals:
   Function:
     Timeout: 3
+  Api:
+    BinaryMediaTypes:
+      - audio/mp4
 
 Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       PackageType: Image
+      CodeUri: .
+      Timeout: 600
       Events:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -24,7 +29,7 @@ Resources:
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./hello_world
-      DockerTag: python3.8-v1
+      DockerTag: python3.7-v1
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

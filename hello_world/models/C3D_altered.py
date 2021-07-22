@@ -12,8 +12,13 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from docker.opts import randomseed
+from opts import randomseed
 import random
+
+# TODO: fix import issue
+# declaring random seed
+randomseed = 0
+#####
 
 torch.manual_seed(randomseed); torch.cuda.manual_seed_all(randomseed); random.seed(randomseed); np.random.seed(randomseed)
 
@@ -72,6 +77,6 @@ class C3D_altered(nn.Module):
 """
 References
 ----------
-[1] Tran, Du, et al. "Learning spatiotemporal features with 3d convolutional networks." 
+[1] Tran, Du, et al. "Learning spatiotemporal features with 3d convolutional networks."
 Proceedings of the IEEE international conference on computer vision. 2015.
 """

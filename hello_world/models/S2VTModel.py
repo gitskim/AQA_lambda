@@ -18,7 +18,13 @@ import torch.nn.functional as F
 import random
 import numpy as np
 from torch.autograd import Variable
-from docker.opts import randomseed
+# from opts import randomseed
+
+# TODO: fix import issue
+# declaring random seed
+randomseed = 0
+#####
+
 
 torch.manual_seed(randomseed); torch.cuda.manual_seed_all(randomseed); random.seed(randomseed); np.random.seed(randomseed)
 

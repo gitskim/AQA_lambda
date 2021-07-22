@@ -2,10 +2,9 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "lambda"
+stack_name = "yanqing1"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-12xtmy2749plc"
-s3_prefix = "lambda"
+s3_prefix = "yanqing1"
 region = "us-west-2"
-confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 image_repositories = ["HelloWorldFunction=724670356997.dkr.ecr.us-west-2.amazonaws.com/lambda"]
