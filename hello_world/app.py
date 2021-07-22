@@ -155,6 +155,8 @@ def load_weights():
     s_reg_loaded = os.path.isfile(m3_path)
     dive_cla_loaded = os.path.isfile(m4_path)
 
+    logger.info("Checking if models are existing...")
+
     if cnn_loaded and fc6_loaded and s_reg_loaded and dive_cla_loaded:
         return
 
@@ -166,13 +168,34 @@ def load_weights():
 
     s3 = boto3.client('s3')
     if not cnn_loaded:
-        s3.download_file(BUCKET_NAME, BUCKET_WEIGHT_CNN, m1_path)
+        logger.info("Downloading {}...".format(BUCKET_WEIGHT_CNN))
+        try:
+            s3.download_file(BUCKET_NAME, BUCKET_WEIGHT_CNN, m1_path)
+        except Exception as e:
+            logger.error(str(e))
+            return
     if not fc6_loaded:
-        s3.download_file(BUCKET_NAME, BUCKET_WEIGHT_FC6, m2_path)
+        logger.info("Downloading {}...".format(BUCKET_WEIGHT_FC6))
+        try:
+            s3.download_file(BUCKET_NAME, BUCKET_WEIGHT_FC6, m2_path)
+        except Exception as e:
+            logger.error(str(e))
+            return
     if not s_reg_loaded:
-        s3.download_file(BUCKET_NAME, BUCKET_WEIGHT_S_REG, m3_path)
+        logger.info("Downloading {}...".format(BUCKET_WEIGHT_S_REG))
+        try:
+            s3.download_file(BUCKET_NAME, BUCKET_WEIGHT_S_REG, m3_path)
+        except Exception as e:
+            logger.error(str(e))
+            return
     if not dive_cla_loaded:
-        s3.download_file(BUCKET_NAME, BUCKET_WEIGHT_DIVE_CLA, m4_path)
+        logger.info("Downloading {}...".format(BUCKET_WEIGHT_DIVE_CLA))
+        try:
+            s3.download_file(BUCKET_NAME, BUCKET_WEIGHT_DIVE_CLA, m4_path)
+        except Exception as e:
+            logger.error(str(e))
+            return
+    logger.info("All models are ready!")
 
 def inference_with_one_video_frames(frames):
     m1_path = 'model_CNN_94.pth'
@@ -191,28 +214,30 @@ def inference_with_one_video_frames(frames):
 
     model_CNN = C3D_altered()
     model_CNN.load_state_dict(torch.load(m1_path, map_location={'cuda:0': 'cpu'}))
+    logger.info("Model CNN loaded")
 
     # loading our fc6 layer
     model_my_fc6 = my_fc6()
     model_my_fc6.load_state_dict(torch.load(m2_path, map_location={'cuda:0': 'cpu'}))
+    logger.info("Model FC6 loaded")
 
     # loading our score regressor
     model_score_regressor = score_regressor()
     model_score_regressor.load_state_dict(torch.load(m3_path, map_location={'cuda:0': 'cpu'}))
     logger.info('Using Final Score Loss')
     with torch.no_grad():
-        pred_scores = [];
+        pred_scores = []
         # true_scores = []
         if with_dive_classification:
-            pred_position = [];
-            pred_armstand = [];
-            pred_rot_type = [];
-            pred_ss_no = [];
+            pred_position = []
+            pred_armstand = []
+            pred_rot_type = []
+            pred_ss_no = []
             pred_tw_no = []
-            true_position = [];
-            true_armstand = [];
-            true_rot_type = [];
-            true_ss_no = [];
+            true_position = []
+            true_armstand = []
+            true_rot_type = []
+            true_ss_no = []
             true_tw_no = []
 
         model_CNN.eval()
