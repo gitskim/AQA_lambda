@@ -12,10 +12,10 @@ logger.info("##### Current dir files: {}".format(os.listdir()))
 
 import torch
 from torch.utils.data import DataLoader
-from C3D_altered import C3D_altered
-from my_fc6 import my_fc6
-from score_regressor import score_regressor
-# from opts import *
+from models.C3D_altered import C3D_altered
+from models.my_fc6 import my_fc6
+from models.score_regressor import score_regressor
+from opts import *
 import numpy as np
 import cv2 as cv
 import tempfile
@@ -23,6 +23,17 @@ from torchvision import transforms
 import base64
 import boto3
 import json
+
+# https://stackoverflow.com/questions/39383465/python-read-only-file-system-error-with-s3-and-lambda-when-opening-a-file-for-re
+tmp_path = "/tmp"
+m1_path = os.path.join(tmp_path, m1_path)
+m2_path = os.path.join(tmp_path, m2_path)
+m3_path = os.path.join(tmp_path, m3_path)
+m4_path = os.path.join(tmp_path, m4_path)
+logger.info(f"m1_path: {m1_path}")
+logger.info(f"m2_path: {m2_path}")
+logger.info(f"m3_path: {m3_path}")
+logger.info(f"m4_path: {m4_path}")
 
 def lambda_handler(event, context):
     try:
@@ -93,15 +104,17 @@ def center_crop(img, dim):
     return crop_img
 
 def preprocess_one_video(video_data):
-    # TODO: fix this later
-    C, H, W = 3,112,112
-    input_resize = 171,128
-    test_batch_size = 1
-
+    # # TODO: fix this later
+    # C, H, W = 3,112,112
+    # input_resize = 171,128
+    # test_batch_size = 1
+    logger.info(f"input_resize: {input_resize}")
+    logger.info(f"m2_path: {m2_path}")
 
     if video_data is not None:
         tfile = tempfile.NamedTemporaryFile(delete=False)
-        tfile.write(base64.b64decode(video_data))
+        tfile.write(base64.b64decode(str(video_data)))
+        # tfile.write(video_data)
 
         vf = cv.VideoCapture(tfile.name)
 
@@ -119,7 +132,7 @@ def preprocess_one_video(video_data):
                 frames = frame
             else:
                 frames = frame
-
+        logger.info(f"frames: {frames}")
 
         vf.release()
         cv.destroyAllWindows()
@@ -138,17 +151,13 @@ def preprocess_one_video(video_data):
         return frames
 
 def load_weights():
-    # TODO: fix this import issue
-    m1_path = 'model_CNN_94.pth'
-    m2_path = 'model_my_fc6_94.pth'
-    m3_path = 'model_score_regressor_94.pth'
-    m4_path = 'model_dive_classifier_94.pth'
-
-    current_path = os.path.abspath(os.getcwd())
-    m1_path = os.path.join(current_path, m1_path)
-    m2_path = os.path.join(current_path, m2_path)
-    m3_path = os.path.join(current_path, m3_path)
-    m4_path = os.path.join(current_path, m4_path)
+    # # TODO: fix this import issue
+    # m1_path = 'model_CNN_94.pth'
+    # m2_path = 'model_my_fc6_94.pth'
+    # m3_path = 'model_score_regressor_94.pth'
+    # m4_path = 'model_dive_classifier_94.pth'
+    logger.info("In load_weights...")
+    logger.info(f"m2_path: {m2_path}")
 
     cnn_loaded = os.path.isfile(m1_path)
     fc6_loaded = os.path.isfile(m2_path)
@@ -198,16 +207,11 @@ def load_weights():
     logger.info("All models are ready!")
 
 def inference_with_one_video_frames(frames):
-    m1_path = 'model_CNN_94.pth'
-    m2_path = 'model_my_fc6_94.pth'
-    m3_path = 'model_score_regressor_94.pth'
-    m4_path = 'model_dive_classifier_94.pth'
-    with_dive_classification = False
-    
-    current_path = os.path.abspath(os.getcwd())
-    m1_path = os.path.join(current_path, m1_path)
-    m2_path = os.path.join(current_path, m2_path)
-    m3_path = os.path.join(current_path, m3_path)
+    # m1_path = 'model_CNN_94.pth'
+    # m2_path = 'model_my_fc6_94.pth'
+    # m3_path = 'model_score_regressor_94.pth'
+    # m4_path = 'model_dive_classifier_94.pth'
+    # with_dive_classification = False
 
     logger.info("Starting to load the trained models...")
     load_weights()
@@ -285,5 +289,5 @@ def inference_with_one_video_frames(frames):
             temp_final_score = model_score_regressor(sample_feats_fc6)
             pred_scores.extend([element[0] for element in temp_final_score.data.cpu().numpy()])
 
-            logger.info('Predicted scores: ', pred_scores)
+            logger.info(f'Predicted scores: {pred_scores}')
             return pred_scores

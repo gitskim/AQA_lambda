@@ -13,12 +13,12 @@ import torch
 import torch.nn as nn
 import numpy as np
 import random
-# from opts import randomseed
+from opts import randomseed
 
-# TODO: fix import issue
-# declaring random seed
-randomseed = 0
-#####
+# # TODO: fix import issue
+# # declaring random seed
+# randomseed = 0
+# #####
 
 
 

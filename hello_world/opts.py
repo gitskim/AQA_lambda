@@ -5,10 +5,10 @@ C, H, W = 3,112,112
 input_resize = 171,128#
 test_batch_size = 1
 
-m1_path = 'models/model_CNN_94.pth'
-m2_path = 'models/model_my_fc6_94.pth'
-m3_path = 'models/model_score_regressor_94.pth'
-m4_path = 'models/model_dive_classifier_94.pth'
+m1_path = 'model_CNN_94.pth'
+m2_path = 'model_my_fc6_94.pth'
+m3_path = 'model_score_regressor_94.pth'
+m4_path = 'model_dive_classifier_94.pth'
 
 
 with_dive_classification = False

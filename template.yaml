@@ -11,7 +11,9 @@ Globals:
     Timeout: 3
   Api:
     BinaryMediaTypes:
-      - audio/mp4
+      - application~1octet-stream
+      - multipart~1form-data
+      - audio~1mp4
 
 Resources:
   HelloWorldFunction:
@@ -20,6 +22,9 @@ Resources:
       PackageType: Image
       CodeUri: .
       Timeout: 600
+      MemorySize: 4096
+      Policies:
+        - AmazonS3ReadOnlyAccess
       Events:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
